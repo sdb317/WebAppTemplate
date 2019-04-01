@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> 
+    <style type="text/css">
+    </style>
+    <defs>
+        <symbol id='demoIcon' viewBox="-10 0 50 50">
+            <circle
+                id="circle"
+                cx="0"
+                cy="25"
+                r="20"
+                style="fill-opacity:1;"
+                fill="#1ca8dd"
+                />
+            <path
+                d="M -5 10 h10 v10 h10 v10 h-10 v10 h-10 v-10 h-10 v-10 h10 z"
+                id="plus"
+                style="fill-opacity:1;"
+                fill="#252830"
+                stroke="#252830"
+                stroke-width="2"
+                stroke-linejoin="round"
+                />
+            <text x="10" y="15" stroke="none">
+                DEMO
+            </text>
+        </symbol>
+    </defs>
+</svg>
