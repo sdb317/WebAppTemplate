@@ -62,7 +62,7 @@ class Command(BaseCommand):
             sql_dir = os.path.join(os.path.abspath(os.path.join(settings.BASE_DIR, os.pardir)), 'sql')
             if not os.path.isdir(sql_dir):
                 raise CommandError('The sql folder could not be found. Script should be in: %s' % sql_dir)
-            sql_files = [os.path.join(sql_dir, f) for f in os.listdir(sql_dir) if os.path.isfile(os.path.join(sql_dir, f))]
+            sql_files = [os.path.join(sql_dir, f) for f in os.listdir(sql_dir) if os.path.isfile(os.path.join(sql_dir, f)) and (f.find('.sql') != -1)]
             for sql_file in sorted(sql_files):
                 self.execute_sql_file(sql_file)
         except Exception as e:

@@ -89,6 +89,9 @@ To create the functions for a table, run `admin\QuerySchema.bat <app> <table>`.
 
 The above assumes msxsl.exe is installed.
 
+Once the Postgres functions have been created, they can be loaded into the database wit `python app\python\manage.py executesqlscripts`.
+
+
 ## Project Standards for RESTapi's
 
 This document describes the standards to be applied for **all** RESTapi development. It aims to provide a consistent and intuitive interface between client & server applications.
