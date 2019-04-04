@@ -10,18 +10,17 @@ import fnmatch
 import csv
 import fileinput
 
-import urlparse
 import json
 
 from django.conf import settings
 from django.test import TestCase, Client
 from django.test.runner import DiscoverRunner
-from django.db.models.loading import get_models
 from rest_framework.test import APIClient
 from rest_framework import status
 
 import mock
-from . import websitePublicationViewSet
+
+# python app\python\manage.py test demo.debug.MyTestCases.test<TestName>
 
 class DiscoverRunnerForPLUS(DiscoverRunner):
     """
@@ -35,64 +34,121 @@ class DiscoverRunnerForPLUS(DiscoverRunner):
         self.teardown_test_environment()
         return self.suite_result(suite, result)
 
-###########################################################
-## Django REST Framework
-## 
+class MyTestCases(TestCase):
 
-from demo.models import Person
+    @classmethod
+    def setUpClass(cls):
+        '''Call on class creation.'''
+        print('Calling \'setUpClass\'')
+        super(MyTestCases, cls).setUpClass()
 
- class PersonTestCases(TestCase):
-     fixtures = ['persons.json']
-     url = fullURL('persons')
+    def setUp(self):
+        '''Call before every test case.'''
+        print('Calling \'setUp\'')
 
-     def test_person_get(self):
-         client = APIClient()
-         # get all persons
-         response = client.get(self.url, format='json')
-         self.assertEqual(response.status_code, status.HTTP_200_OK)
-         self.assertGreaterEqual(len(response.data), 1)
-         # get one person
-         response = client.get(self.url + '1/', format='json')
-         content = json.loads(response.content)
-         # compare to value in fixture
-         self.assertEqual(content['name'], 'Result Presentation')
+    def tearDown(self):
+        '''Call after every test case.'''
+        print('Calling \'tearDown\'')
 
-     def test_person_post(self):
-         client = APIClient()
-         # check if new person can be created
-         response = client.post(self.url, {
-             'name': 'test'
-         }, format='json')
-         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    '''Test cases. Note that all test method names must begin with 'test'.'''
 
-     def test_person_delete(self):
-         client = APIClient()
-         person = Person(name='test')
-         person.save()
-         # check if newly created person is api accessible
-         response = client.get('{}{}/'.format(self.url, person.id), format='json')
-         self.assertEqual(response.status_code, status.HTTP_200_OK)
-         # delete via api
-         response = client.delete('{}{}/'.format(self.url, person.id), format='json')
-         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-         # check again if api accessible
-         response = client.get('{}{}/'.format(self.url, person.id), format='json')
-         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    def testPersonModel(self):
+        try:
+            import models
+            persons = models.Person.objects.filter(first_name='Simon')
+            assert True
+        except Exception as e:
+            assert False,'Exception: %s'%str(e)
 
-     def test_person_update(self):
-         client = APIClient()
-         person = Person(name='test')
-         person.save()
-         # update newly created object via api
-         response = client.put('{}{}/'.format(self.url, person.id), {
-             'name': 'updated'
-         }, format='json')
-         self.assertEqual(response.status_code, status.HTTP_200_OK)
-         response = client.get('{}{}/'.format(self.url, person.id), format='json')
-         # get object again via api and check if value was updated
-         self.assertEqual(response.status_code, status.HTTP_200_OK)
-         content = json.loads(response.content)
-         self.assertEqual(content['name'], 'updated')
+    def testHomePage(self):
+        print('Calling \'testHomePage\'')
+        try:
+            #mock_render_to_response = mock.MagicMock()
+            with mock.patch.multiple( \
+                'demo.views', \
+                #render_to_response=mock_render_to_response, \ # Use a real 'render_to_response' and test the returned HttpResponse object instead
+                RequestContext=mock.MagicMock(), \
+                login_required=lambda x: x, \
+                user_passes_test=lambda x: x \
+                ):
+                from views import home
+                mock_request = mock.Mock()
+                mock_request.user.username = 'simon'
+                result = home(mock_request)
+                #_, args, _ = mock_render_to_response.mock_calls[0] # Could examine the template data here
+            assert result.status_code == 200 and result.content.find(r'<h1>Welcome Simon</h1>') != -1
+        except Exception as e:
+            assert False,'Exception: %s'%str(e)
+
+    def testPersonQueryGet(self): # test demo.tests.MyTestCases.testPersonQueryGet
+        print('Calling \'testPersonQueryGet\'')
+        try:
+            import personQuery
+            test = personQuery.PersonQuery('person')
+            results = test.get('{"Criteria": {"first_name": null, "last_name": null, "email": null, "type": null}}')
+            self.assertTrue((re.search(r'Persons', str(results)) != None), r'Unexpected contents')
+        except Exception as e:
+            assert False,'Exception: %s'%str(e)
+
+    def testPersonQuerySet(self): # test demo.tests.MyTestCases.testPersonQuerySet
+        print('Calling \'testPersonQuerySet\'')
+        try:
+            import personQuery
+            test = personQuery.PersonQuery('person')
+            payload = \
+                """
+                {
+                    "first_name": "Simon",
+                    "last_name": "Bell",
+                    "email": "",
+                    "type": 1,
+                    "links":[
+                    ]
+                }
+                """
+            result = test.set(json.loads(payload), 'simon')
+            self.assertTrue((re.search(r'Success', str(result)) != None), r'Unexpected contents')
+        except Exception as e:
+            assert False,'Exception: %s'%str(e)
+
+    def testPersonViewSetCreate(self): # test demo.tests.MyTestCases.testPersonViewSet
+        print('Calling \'testPersonViewSetCreate\'')
+        try:
+            import personViewSet
+            #mock_render_to_response = mock.MagicMock()
+            with mock.patch('plus.personViewSet'):
+                mock_request = mock.Mock()
+                mock_request.body = \
+                    """
+                    {
+                        "id":1,
+                        "first_name": "Simon",
+                        "last_name": "Bell",
+                        "email": "",
+                        "type": 1,
+                        "links":[
+                        ]
+                    }
+                    """
+                test = personViewSet.PersonViewSet()
+                result = test.create(mock_request)
+                #_, args, _ = mock_render_to_response.mock_calls[0] # Could examine the template data here
+            assert result.status_code == 200 and result.data['Success'] > 1
+        except Exception as e:
+            assert False,'Exception: %s'%str(e)
+
+    def testGetDataJSON(self): # test demo.tests.MyTestCases.testGetDataJSON
+        print('Calling \'testGetDataJSON\'')
+        try:
+            from .views import get_data_json
+            result = get_data_json('demo__definition', 'label,numeric', 'category=\'EntityType\'', None)
+            if result[0]:
+                print(result[1])
+                assert len(result[1]) > 0
+                return
+            assert False
+        except Exception as e:
+            assert False,'Exception: %s'%str(e)
 
 if __name__=='__main__': # Only used if run outside of Django
     try:
