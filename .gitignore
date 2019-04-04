@@ -1,7 +1,10 @@
 # Logs
 logs
 *.log
+
+IDE files
 *.bak
+.vs*
 
 # Compiled binary files
 bin/
@@ -14,5 +17,4 @@ env/
 
 # Optional cache directories
 .cache
-.vscode
 
