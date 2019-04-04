@@ -18,15 +18,20 @@ class PersonSerializer(baseSerializer.BaseSerializer):
 
 
 # Class Initialisation
+        super().__init__(**kwargs)
         return
 
 # Operations
 
     @property
     def data(self):
-        return
+        return super().data
+
     def create(self,validated_data):
         return
+
     def update(self,instance,validated_data):
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
         return
 

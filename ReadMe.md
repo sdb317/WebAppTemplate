@@ -83,9 +83,11 @@ Finally, to export the definitions for use in Python and Javascript, run `admin\
 
 ### Create Postgres functions
 
-Once the models have been updated in the database, the Postgres functions are automatically generated to reflect the new schema. This approach reduces th number of obscure bugs caused by manually trying to effect the changes.
+Once the models have been updated in the database, the Postgres functions are automatically generated to reflect the new schema. This approach reduces the number of obscure bugs caused by manually trying to effect the changes.
 
 To create the functions for a table, run `admin\QuerySchema.bat <app> <table>`.
+
+The above assumes msxsl.exe is installed.
 
 ## Project Standards for RESTapi's
 
@@ -95,15 +97,13 @@ For Django applications the Django REST Framework package is used to provide a b
 
 ### API Versioning
 
-The URL should start with a version number e.g. ```/1/employees/```, so that 'breaking changes' can be released while still supporting older clients.
+The URL should start with a version number e.g. ```/1/persons/```, so that 'breaking changes' can be released while still supporting older clients.
 
 ### URL Naming
 
-The URL should only contain resources (nouns), not actions or verbs e.g. ```/employees/``` not ```/addNewEmployee/```
+The URL should only contain resources (nouns), not actions or verbs e.g. ```/persons/``` not ```/addNewPperson/```
 
 The resource should always be plural in the API endpoint and if we want to access one instance of the resource, we can always pass the id in the URL
-
-By default a standard URL will return HTML. If different content is returned this **must** be specified by using a dot-suffix notation e.g.  ```/employees.xml/``` or ```/employees.json/``` - UNDER REVIEW
 
 All URL's shound end in a forward-slash. ```/```
 
@@ -111,11 +111,11 @@ All URL's shound end in a forward-slash. ```/```
 
 The verbs should be represented by the 4 different HTTP methods: GET, POST, DELETE, PUT
 
-* method ```GET``` path ```/employees/``` should get the list of all employees, or a filtered list if query parameters are supplied
-* method ```GET``` path ```/employees/34/``` should get the details of employee 34
-* method ```DELETE``` path ```/employees/34/``` should delete employee 34
-* method ```POST``` path ```/employees/``` should create a new employee, using the payload supplied, and return a unique identifier for the created record
-* method ```POST or PUT``` path ```/employees/34/``` should update the existing employee 34, using the payload supplied
+* method ```GET``` path ```/persons/``` should get the list of all persons, or a filtered list if query parameters are supplied
+* method ```GET``` path ```/persons/34/``` should get the details of person 34
+* method ```DELETE``` path ```/persons/34/``` should delete person 34
+* method ```POST``` path ```/persons/``` should create a new person, using the payload supplied, and return a unique identifier for the created record
+* method ```POST or PUT``` path ```/persons/34/``` should update the existing person 34, using the payload supplied
 
 ### HTTP response status codes
 
@@ -131,7 +131,7 @@ A simplified list of the full HTTP status codes will be used:
 
 * ```400 Bad Request``` indicates that the request by the client was not processed
 
-In this instance a meaningful "human-understandable" error message should also be returned to the client e.g. 'employee name may not be blank'
+In this instance a meaningful "human-understandable" error message should also be returned to the client e.g. 'person name may not be blank'
 
 #### 5xx (Server Error Category)
 
