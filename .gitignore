@@ -1,10 +1,12 @@
 # Logs
 logs
 *.log
+*.bak
 
 # Compiled binary files
 bin/
 obj/
+**/__pycache__/
 
 # Dependency directories
 node_modules/

@@ -1,0 +1,9 @@
+[
+{"model": "demo.definition","fields": {"category": "EntityType","label": "Unknown","numeric": "0","alphanumeric": "<Unknown>"}},
+{"model": "demo.definition","fields": {"category": "EntityType","label": "Person","numeric": "1","alphanumeric": "Person"}},
+{"model": "demo.definition","fields": {"category": "OptionPersonType","label": "Unknown","numeric": "0","alphanumeric": "<Unknown>"}},
+{"model": "demo.definition","fields": {"category": "OptionPersonType","label": "Director","numeric": "1","alphanumeric": "Director"}},
+{"model": "demo.definition","fields": {"category": "OptionPersonType","label": "Manager","numeric": "2","alphanumeric": "Manager"}},
+{"model": "demo.definition","fields": {"category": "OptionPersonType","label": "Employee","numeric": "3","alphanumeric": "Employee"}},
+{"model": "demo.definition","fields": {"category": "OptionPersonType","label": "Associate","numeric": "4","alphanumeric": "Associate"}}
+]
