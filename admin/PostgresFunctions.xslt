@@ -28,7 +28,7 @@
         </xsl:choose>
         <xsl:choose>
           <xsl:when test='string-length($links) > 0'>
-            <xsl:text>    _links </xsl:text><xsl:value-of select='$app'/><xsl:text>_link_type[],&#xd;&#xa;</xsl:text>
+            <xsl:text>    _links app_link_type[][],&#xd;&#xa;</xsl:text>
           </xsl:when>
           <xsl:otherwise>
           </xsl:otherwise>
@@ -42,7 +42,6 @@
         <xsl:text>        insert into&#xd;&#xa;</xsl:text>
         <xsl:text>            public.</xsl:text><xsl:value-of select='$app'/><xsl:text>_</xsl:text><xsl:value-of select='$table'/><xsl:text>&#xd;&#xa;</xsl:text>
         <xsl:text>                (&#xd;&#xa;</xsl:text>
-        <xsl:text>                uuid,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_on,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_by,&#xd;&#xa;</xsl:text>
         <xsl:choose>
@@ -56,7 +55,6 @@
         <xsl:text>                )&#xd;&#xa;</xsl:text>
         <xsl:text>            values&#xd;&#xa;</xsl:text>
         <xsl:text>                (&#xd;&#xa;</xsl:text>
-        <xsl:text>                (select md5(random()::text || clock_timestamp()::text)::uuid),&#xd;&#xa;</xsl:text>
         <xsl:text>                now(),&#xd;&#xa;</xsl:text>
         <xsl:text>                _saved_by,&#xd;&#xa;</xsl:text>
         <xsl:choose>
@@ -94,7 +92,6 @@
         <xsl:text>        insert into&#xd;&#xa;</xsl:text>
         <xsl:text>            public.</xsl:text><xsl:value-of select='$app'/><xsl:text>_</xsl:text><xsl:value-of select='$table'/><xsl:text>_audit&#xd;&#xa;</xsl:text>
         <xsl:text>                (&#xd;&#xa;</xsl:text>
-        <xsl:text>                uuid,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_on,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_by,&#xd;&#xa;</xsl:text>
         <xsl:text>                </xsl:text><xsl:value-of select='$table'/><xsl:text>_id,&#xd;&#xa;</xsl:text>
@@ -108,7 +105,6 @@
         <xsl:apply-templates select='column[./@column_name != concat($parent_table,"_id")]' mode='insertColumns'/>
         <xsl:text>                )&#xd;&#xa;</xsl:text>
         <xsl:text>            select&#xd;&#xa;</xsl:text>
-        <xsl:text>                uuid,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_on,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_by,&#xd;&#xa;</xsl:text>
         <xsl:text>                id,&#xd;&#xa;</xsl:text>
@@ -215,7 +211,7 @@
         </xsl:choose>
         <xsl:choose>
           <xsl:when test='string-length($links) > 0'>
-            <xsl:text>        array[row(0,0,0),]::</xsl:text><xsl:value-of select='$app'/><xsl:text>_link_type[], -- _links </xsl:text><xsl:value-of select='$app'/><xsl:text>_link_type[],&#xd;&#xa;</xsl:text>
+            <xsl:text>        array[row(0,0,0),]::app_link_type[][], -- _links app_link_type[][],&#xd;&#xa;</xsl:text>
           </xsl:when>
           <xsl:otherwise>
           </xsl:otherwise>
@@ -240,7 +236,6 @@
         <xsl:text>        insert into /* Audit current item */&#xd;&#xa;</xsl:text>
         <xsl:text>            public.</xsl:text><xsl:value-of select='$app'/><xsl:text>_</xsl:text><xsl:value-of select='$table'/><xsl:text>_audit&#xd;&#xa;</xsl:text>
         <xsl:text>                (&#xd;&#xa;</xsl:text>
-        <xsl:text>                uuid,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_on,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_by,&#xd;&#xa;</xsl:text>
         <xsl:text>                </xsl:text><xsl:value-of select='$table'/><xsl:text>_id,&#xd;&#xa;</xsl:text>
@@ -254,7 +249,6 @@
         <xsl:apply-templates select='column[./@column_name != concat($parent_table,"_id")]' mode='insertColumns'/>
         <xsl:text>                )&#xd;&#xa;</xsl:text>
         <xsl:text>            select&#xd;&#xa;</xsl:text>
-        <xsl:text>                uuid,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_on,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_by,&#xd;&#xa;</xsl:text>
         <xsl:text>                id,&#xd;&#xa;</xsl:text>
@@ -273,7 +267,6 @@
         <xsl:text>        insert into /* Audit deletion */&#xd;&#xa;</xsl:text>
         <xsl:text>            public.</xsl:text><xsl:value-of select='$app'/><xsl:text>_</xsl:text><xsl:value-of select='$table'/><xsl:text>_audit&#xd;&#xa;</xsl:text>
         <xsl:text>                (&#xd;&#xa;</xsl:text>
-        <xsl:text>                uuid,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_on,&#xd;&#xa;</xsl:text>
         <xsl:text>                saved_by,&#xd;&#xa;</xsl:text>
         <xsl:text>                </xsl:text><xsl:value-of select='$table'/><xsl:text>_id,&#xd;&#xa;</xsl:text>
@@ -287,7 +280,6 @@
         <xsl:apply-templates select='column[./@column_name != concat($parent_table,"_id")]' mode='insertColumns'/>
         <xsl:text>                )&#xd;&#xa;</xsl:text>
         <xsl:text>            select&#xd;&#xa;</xsl:text>
-        <xsl:text>                uuid,&#xd;&#xa;</xsl:text>
         <xsl:text>                now(),&#xd;&#xa;</xsl:text>
         <xsl:text>                _saved_by,&#xd;&#xa;</xsl:text>
         <xsl:text>                id,&#xd;&#xa;</xsl:text>
@@ -330,7 +322,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match='column[@column_name!="id" and @column_name!="uuid" and @column_name!="saved_by" and @column_name!="saved_on"]' mode='arguments'>
+  <xsl:template match='column[@column_name!="id" and @column_name!="saved_by" and @column_name!="saved_on"]' mode='arguments'>
     <xsl:text>    _</xsl:text>
     <xsl:value-of select='@column_name'/>
     <xsl:text> </xsl:text>
@@ -340,9 +332,6 @@
       </xsl:when>
       <xsl:when test='@data_type="boolean"'>
         <xsl:text>boolean</xsl:text>
-      </xsl:when>
-      <xsl:when test='@data_type="uuid"'>
-        <xsl:text>int</xsl:text>
       </xsl:when>
       <xsl:when test='@data_type="timestamp with time zone"'>
         <xsl:text>varchar(10)</xsl:text>
@@ -376,7 +365,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match='column[@column_name!="id" and @column_name!="uuid" and @column_name!="saved_on"]' mode='insertColumns'>
+  <xsl:template match='column[@column_name!="id" and @column_name!="saved_on"]' mode='insertColumns'>
     <xsl:text>                </xsl:text>
     <xsl:value-of select='@column_name'/>
     <xsl:choose>
@@ -389,7 +378,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match='column[@column_name!="id" and @column_name!="uuid" and @column_name!="saved_on"]' mode='insertValues'>
+  <xsl:template match='column[@column_name!="id" and @column_name!="saved_on"]' mode='insertValues'>
     <xsl:text>                </xsl:text>
     <xsl:choose>
       <xsl:when test='@data_type="timestamp with time zone"'>
@@ -421,7 +410,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match='column[@column_name!="id" and @column_name!="uuid" and @column_name!="saved_on"]' mode='updateColumns'>
+  <xsl:template match='column[@column_name!="id" and @column_name!="saved_on"]' mode='updateColumns'>
     <xsl:text>                    </xsl:text>
     <xsl:value-of select='@column_name'/>
     <xsl:text>=</xsl:text>
@@ -456,7 +445,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match='column[@column_name!="id" and @column_name!="uuid" and @column_name!="saved_on"]' mode='argumentsForTesting'>
+  <xsl:template match='column[@column_name!="id" and @column_name!="saved_on"]' mode='argumentsForTesting'>
     <xsl:text>        </xsl:text>
     <xsl:choose>
       <xsl:when test='@data_type="integer"'>
@@ -485,9 +474,6 @@
       </xsl:when>
       <xsl:when test='@data_type="boolean"'>
         <xsl:text>boolean</xsl:text>
-      </xsl:when>
-      <xsl:when test='@data_type="uuid"'>
-        <xsl:text>int</xsl:text>
       </xsl:when>
       <xsl:when test='@data_type="timestamp with time zone"'>
         <xsl:text>varchar(10)</xsl:text>

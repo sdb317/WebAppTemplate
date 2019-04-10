@@ -20,7 +20,7 @@ import json
 
 import definitions
 
-import managedConnection
+from . import managedConnection
 
 def WithCursor(function):
     try:
@@ -59,20 +59,19 @@ class OptimisedModels(models.PermissionModel):
 
     def get(self,criteria):
         sqlCriteria = ''
-        jsonCriteria = json.loads(criteria) # Convert string to object
         detail = False
-        if u'detail' in jsonCriteria[u'Criteria'] and jsonCriteria[u'Criteria'][u'detail'] == 'true':
+        if u'detail' in criteria[u'Criteria'] and criteria[u'Criteria'][u'detail'] == 'true':
             detail = True
         audit = False
-        if u'audit' in jsonCriteria[u'Criteria'] and jsonCriteria[u'Criteria'][u'audit'] == 'true':
+        if u'audit' in criteria[u'Criteria'] and criteria[u'Criteria'][u'audit'] == 'true':
             audit = True
-        if u'id' in jsonCriteria[u'Criteria'] and jsonCriteria[u'Criteria'][u'id'] != None:
-            sqlCriteria += "(%s.id=%s)"%(self.table, jsonCriteria[u'Criteria'][u'id']) # An integer
+        if u'id' in criteria[u'Criteria'] and criteria[u'Criteria'][u'id'] != None:
+            sqlCriteria += "(%s.id=%s)"%(self.table, criteria[u'Criteria'][u'id']) # An integer
             detail = True
-        if u'saved_by' in jsonCriteria[u'Criteria'] and jsonCriteria[u'Criteria'][u'saved_by'] != None and len(jsonCriteria[u'Criteria'][u'saved_by']) > 0: # This is a list of words to search for in publication name field
+        if u'saved_by' in criteria[u'Criteria'] and criteria[u'Criteria'][u'saved_by'] != None and len(criteria[u'Criteria'][u'saved_by']) > 0: # This is a list of words to search for in publication name field
             if len(sqlCriteria):
                 sqlCriteria += " and "
-            sqlCriteria += "(%s.saved_by=''%s'' or %s_audit.saved_by=''%s'')"%(self.table, jsonCriteria[u'Criteria'][u'saved_by'], self.table, jsonCriteria[u'Criteria'][u'saved_by'])
+            sqlCriteria += "(%s.saved_by=''%s'' or %s_audit.saved_by=''%s'')"%(self.table, criteria[u'Criteria'][u'saved_by'], self.table, criteria[u'Criteria'][u'saved_by'])
         return (sqlCriteria,detail,audit)
 
     def GetTypeForHBPID(self,id):
@@ -88,10 +87,10 @@ class OptimisedModels(models.PermissionModel):
         if value is None:
             return "null"
         else:
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 return "'%s'"%value.replace("'",r"''")
             else:
-                return value
+                return str(value)
 
     def Normalise(self,value):
         try:

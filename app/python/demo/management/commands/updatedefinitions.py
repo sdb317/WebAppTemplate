@@ -1,3 +1,5 @@
+import os
+
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.core.management import call_command
@@ -13,12 +15,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
+            app = os.path.basename(os.path.normpath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
             sql_statement = \
                 """
-                drop table if exists demo__definition_backup;
-                select * into demo__definition_backup from demo__definition;
-                truncate table demo__definition;
-                """
+                drop table if exists {0}__definition_backup;
+                select * into {0}__definition_backup from {0}__definition;
+                truncate table {0}__definition;
+                """.format(app)
             with connection.cursor() as c:
                 c.execute(sql_statement)
             call_command('loaddata', 'definitions.json')

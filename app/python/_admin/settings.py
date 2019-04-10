@@ -26,7 +26,7 @@ logging.info('BASE_DIR: %s'%BASE_DIR)
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1$6vig-^1ytye$9svhy**p=x^v$(7=!+fm749q0fy$rw#v7!0z'
+SECRET_KEY = '1$6vig-^1ytye$9svhy**p=x^v$(7=!+fm749q0fy$rw#v7!0z' # Change this for your project!!!
 
 ALLOWED_HOSTS = []
 
@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'demo',
+    'demo', # Add your app(s) here!
 ]
 
 MIDDLEWARE = [

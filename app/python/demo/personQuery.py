@@ -48,25 +48,24 @@ class PersonQuery(optimisedModels.OptimisedModels):
         logging.info('PersonQuery.Execute')
         try:
             (sqlCriteria,detail,audit) = super().get(criteria) 
-            jsonCriteria = json.loads(criteria) # Convert string to object
-            if 'first_name' in jsonCriteria['Criteria'] and jsonCriteria['Criteria']['first_name'] != None:
+            if 'first_name' in criteria['Criteria'] and criteria['Criteria']['first_name'] != None:
                 if len(sqlCriteria):
                     sqlCriteria += " and "
-                sqlCriteria += "(person.first_name=''%s'')"%(jsonCriteria['Criteria']['first_name'])
+                sqlCriteria += "(person.first_name=''%s'')"%(criteria['Criteria']['first_name'])
                 detail = True
-            if 'last_name' in jsonCriteria['Criteria'] and jsonCriteria['Criteria']['last_name'] != None:
+            if 'last_name' in criteria['Criteria'] and criteria['Criteria']['last_name'] != None:
                 if len(sqlCriteria):
                     sqlCriteria += " and "
-                sqlCriteria += "(person.last_name=''%s'')"%(jsonCriteria['Criteria']['last_name'])
+                sqlCriteria += "(person.last_name=''%s'')"%(criteria['Criteria']['last_name'])
                 detail = True
-            if 'email' in jsonCriteria['Criteria'] and jsonCriteria['Criteria']['email'] != None:
+            if 'email' in criteria['Criteria'] and criteria['Criteria']['email'] != None:
                 if len(sqlCriteria):
                     sqlCriteria += " and "
-                sqlCriteria += "(lower(person.email) like lower(''%%%s%%''))"%(jsonCriteria['Criteria']['email'].replace("'","''''")) # Contains
-            if 'type' in jsonCriteria['Criteria'] and jsonCriteria['Criteria']['type'] != None and int(jsonCriteria['Criteria']['type']) != definitions.OptionPersonTypeUnknown:
+                sqlCriteria += "(lower(person.email) like lower(''%%%s%%''))"%(criteria['Criteria']['email'].replace("'","''''")) # Contains
+            if 'type' in criteria['Criteria'] and criteria['Criteria']['type'] != None and int(criteria['Criteria']['type']) != definitions.OptionPersonTypeUnknown:
                 if len(sqlCriteria):
                     sqlCriteria += " and "
-                sqlCriteria += "(person.type=%s)"%(jsonCriteria['Criteria']['type']) # Integer
+                sqlCriteria += "(person.type=%s)"%(criteria['Criteria']['type']) # Integer
             sqlStatement = \
                 """
 	            select
@@ -86,25 +85,27 @@ class PersonQuery(optimisedModels.OptimisedModels):
 
     def set(self,instance,user):
         try:
-            publication = instance
-            publication_id = publication['id']
-            links = ','.join(['row(%d,%d,%d)'%(publication['id'],i['value'],i['type'],) for i in publication['links']])
-            links = 'array[%s]::plus_link_type[]'%links
+            person = instance
+            person_id = person['id']
+            links = ','.join(['row(%d,%d,%d)'%(person['id'],i['value'],i['type'],) for i in person['links']])
+            links = 'array[%s]::app_link_type[]'%links
             sqlStatement = ""
-            sqlStatement += self.ParseValue(person['email'])
+            sqlStatement += self.ParseValue(person[u'email'])
             sqlStatement += ", "
-            sqlStatement += self.ParseValue(person['first_name'])
+            sqlStatement += self.ParseValue(person[u'first_name'])
             sqlStatement += ", "
-            sqlStatement += self.ParseValue(person['last_name'])
-            sqlStatement = u"select demo_save_person(%s, %d, %s, %s)"%(
+            sqlStatement += self.ParseValue(person[u'last_name'])
+            sqlStatement += ", "
+            sqlStatement += self.ParseValue(person[u'type'])
+            sqlStatement = u"select demo_save_person(%s, %s, %s, %s)"%(
                 self.ParseValue(user),
                 self.ParseValue(person_id),
                 links,
                 sqlStatement
                 )
             logging.info(sqlStatement)
-            publication_id = self.Execute(sqlStatement, None)
-            return (True, '{"Success": %s}'%publication_id,)
+            person_id = self.Execute(sqlStatement, None)
+            return (True, '{"Success": %s}'%person_id,)
         except Exception as e:
             logging.error('Exception: %s'%str(e))
             return (False, '{"Error": "%s"}'%str(e),)
@@ -112,15 +113,15 @@ class PersonQuery(optimisedModels.OptimisedModels):
 
     def remove(self,instance,user):
         try:
-            publication = instance
-            publication_id = publication['id']
-            sqlStatement = u"select demo_remove_person(%s, %d)"%(
+            person = instance
+            person_id = person['id']
+            sqlStatement = u"select demo_remove_person(%s, %s)"%(
                 self.ParseValue(user),
                 self.ParseValue(person_id),
                 )
             logging.info(sqlStatement)
-            publication_id = self.Execute(sqlStatement, None)
-            return (True, '{"Success": %s}'%publication_id,)
+            person_id = self.Execute(sqlStatement, None)
+            return (True, '{"Success": %s}'%person_id,)
         except Exception as e:
             logging.error('Exception: %s'%str(e))
             return (False, '{"Error": "%s"}'%str(e),)

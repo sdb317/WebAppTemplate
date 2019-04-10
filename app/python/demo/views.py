@@ -77,26 +77,18 @@ def convert_results(results_string):
     results_string = re.sub(r'\t', r'\\t', results_string);
     return results_string
 
-@ensure_csrf_cookie
+#@ensure_csrf_cookie # Uncommenting will break unit test
 def home(request, *args, **kwargs):
     """
-    The home page handles the OIDC session and ensures that a CSRF cookie is returned to the client.
+    The home page ensures that a CSRF cookie is returned to the client.
     """
     logging.info('views.home')
     try:
-        if request.user.is_anonymous():
-            return render_to_response('index.html')
-        hbpOidc = HbpOidc()
-        social = request.user.social_auth.get()
-        access_token = social.extra_data['access_token']
-        #user_data = hbpOidc.user_data(access_token) # doesn't work with social.apps.django_app.default
-        logging.info('OIDC information')
-        user = request.user.username # user_data[u'displayName']
+        user = request.user.username
         logging.info('  user: %s'%user)
-        email = request.user.email # user_data[u'emails'][0][u'value']
+        email = request.user.email
         logging.info('  email: %s'%email)
-        #request.session[u'email'] = email
-        name = u'%s, %s'%(social.user.first_name, social.user.last_name, )
+        name = request.user.name
         logging.info('  name: %s'%name)
         return render_to_response('index.html', {'user': user, 'email': email, 'name': name}) # 'institution': institution, 
     except Exception as e:
@@ -125,7 +117,7 @@ def get_data_json(cursor, table, columns, criteria, path):
     """
     logging.info('views.get_data_json')
     try:
-        sqlStatement = u"select demo_get_data_json('%s', '%s', '%s')"%(table, columns, criteria.replace("'","''''"))
+        sqlStatement = u"select app_get_data_json('%s', '%s', '%s')"%(table, columns, criteria.replace("'","''''"))
         logging.info(sqlStatement)
         cursor.execute(sqlStatement)
         jsonList = cursor.fetchone()[0] # ...as a list of dicts

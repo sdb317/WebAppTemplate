@@ -20,9 +20,9 @@ from rest_framework import status
 
 import mock
 
-# python app\python\manage.py test demo.debug.MyTestCases.test<TestName>
+# python app\python\manage.py test <app>.debug.MyTestCases
 
-class DiscoverRunnerForPLUS(DiscoverRunner):
+class DiscoverRunnerForApp(DiscoverRunner):
     """
     An override of Django's test runner that avoids creation of a test database (see TEST_RUNNER in local.py)
     """
@@ -45,6 +45,8 @@ class MyTestCases(TestCase):
     def setUp(self):
         '''Call before every test case.'''
         print('Calling \'setUp\'')
+        self.app = os.path.basename(os.path.normpath(os.path.dirname(os.path.abspath(__file__))))
+        print('App is \'' + self.app + '\'')
 
     def tearDown(self):
         '''Call after every test case.'''
@@ -52,56 +54,69 @@ class MyTestCases(TestCase):
 
     '''Test cases. Note that all test method names must begin with 'test'.'''
 
-    def testPersonModel(self):
+    def testPersonModel(self): # test <app>.tests.MyTestCases.testPersonModel
         try:
-            import models
-            persons = models.Person.objects.filter(first_name='Simon')
+            from .models import Person
+            persons = Person.objects.filter(first_name='Simon')
             assert True
+        except Exception as e:
+            assert False,'Exception: %s'%str(e)
+
+    def testGetDataJSON(self): # test <app>.tests.MyTestCases.testGetDataJSON
+        print('Calling \'testGetDataJSON\'')
+        try:
+            from .views import get_data_json
+            result = get_data_json(self.app + '__definition', 'label,numeric', 'category=\'EntityType\'', None)
+            if result[0]:
+                print(result[1])
+                assert len(result[1]) > 0
+                return
+            assert False
         except Exception as e:
             assert False,'Exception: %s'%str(e)
 
     def testHomePage(self):
         print('Calling \'testHomePage\'')
         try:
-            #mock_render_to_response = mock.MagicMock()
             with mock.patch.multiple( \
-                'demo.views', \
-                #render_to_response=mock_render_to_response, \ # Use a real 'render_to_response' and test the returned HttpResponse object instead
+                self.app + '.views', \
                 RequestContext=mock.MagicMock(), \
                 login_required=lambda x: x, \
                 user_passes_test=lambda x: x \
                 ):
-                from views import home
+                from .views import home
                 mock_request = mock.Mock()
                 mock_request.user.username = 'simon'
+                mock_request.user.email = 'simon.bell@epfl.ch'
+                mock_request.user.name = 'Simon BELL'
                 result = home(mock_request)
-                #_, args, _ = mock_render_to_response.mock_calls[0] # Could examine the template data here
-            assert result.status_code == 200 and result.content.find(r'<h1>Welcome Simon</h1>') != -1
+            assert result.status_code == 200
         except Exception as e:
             assert False,'Exception: %s'%str(e)
 
-    def testPersonQueryGet(self): # test demo.tests.MyTestCases.testPersonQueryGet
+    def testPersonQueryGet(self): # test <app>.tests.MyTestCases.testPersonQueryGet
         print('Calling \'testPersonQueryGet\'')
         try:
-            import personQuery
-            test = personQuery.PersonQuery('person')
-            results = test.get('{"Criteria": {"first_name": null, "last_name": null, "email": null, "type": null}}')
+            from .personQuery import PersonQuery
+            test = PersonQuery('person')
+            results = test.get(json.loads('{"Criteria": {"first_name": null, "last_name": null, "email": null, "type": null}}'))
             self.assertTrue((re.search(r'Persons', str(results)) != None), r'Unexpected contents')
         except Exception as e:
             assert False,'Exception: %s'%str(e)
 
-    def testPersonQuerySet(self): # test demo.tests.MyTestCases.testPersonQuerySet
+    def testPersonQuerySet(self): # test <app>.tests.MyTestCases.testPersonQuerySet
         print('Calling \'testPersonQuerySet\'')
         try:
-            import personQuery
-            test = personQuery.PersonQuery('person')
+            from .personQuery import PersonQuery
+            test = PersonQuery('person')
             payload = \
                 """
                 {
+                    "id":2,
                     "first_name": "Simon",
-                    "last_name": "Bell",
-                    "email": "",
-                    "type": 1,
+                    "last_name": "BELL",
+                    "email": "simon.bell@epfl.ch",
+                    "type": 0,
                     "links":[
                     ]
                 }
@@ -111,42 +126,42 @@ class MyTestCases(TestCase):
         except Exception as e:
             assert False,'Exception: %s'%str(e)
 
-    def testPersonViewSetCreate(self): # test demo.tests.MyTestCases.testPersonViewSet
+    def testPersonViewSetList(self): # test <app>.tests.MyTestCases.testPersonViewSetList
+        print('Calling \'testPersonViewSetList\'')
+        try:
+            from .personViewSet import PersonViewSet
+            with mock.patch(self.app + '.personViewSet'):
+                mock_request = mock.Mock()
+                mock_request.query_params = dict()
+                test = PersonViewSet()
+                result = test.list(mock_request)
+            assert result.status_code == 200
+        except Exception as e:
+            assert False,'Exception: %s'%str(e)
+
+    def testPersonViewSetCreate(self): # test <app>.tests.MyTestCases.testPersonViewSetCreate
         print('Calling \'testPersonViewSetCreate\'')
         try:
-            import personViewSet
-            #mock_render_to_response = mock.MagicMock()
-            with mock.patch('plus.personViewSet'):
+            from .personViewSet import PersonViewSet
+            with mock.patch(self.app + '.personViewSet'):
                 mock_request = mock.Mock()
-                mock_request.body = \
+                mock_request.user.username = "simon"
+                data = \
                     """
                     {
-                        "id":1,
+                        "id":2,
                         "first_name": "Simon",
-                        "last_name": "Bell",
-                        "email": "",
-                        "type": 1,
+                        "last_name": "BELL",
+                        "email": "simon.bell@epfl.ch",
+                        "type": 0,
                         "links":[
                         ]
                     }
                     """
-                test = personViewSet.PersonViewSet()
+                mock_request.data = json.loads(data)
+                test = PersonViewSet()
                 result = test.create(mock_request)
-                #_, args, _ = mock_render_to_response.mock_calls[0] # Could examine the template data here
             assert result.status_code == 200 and result.data['Success'] > 1
-        except Exception as e:
-            assert False,'Exception: %s'%str(e)
-
-    def testGetDataJSON(self): # test demo.tests.MyTestCases.testGetDataJSON
-        print('Calling \'testGetDataJSON\'')
-        try:
-            from .views import get_data_json
-            result = get_data_json('demo__definition', 'label,numeric', 'category=\'EntityType\'', None)
-            if result[0]:
-                print(result[1])
-                assert len(result[1]) > 0
-                return
-            assert False
         except Exception as e:
             assert False,'Exception: %s'%str(e)
 

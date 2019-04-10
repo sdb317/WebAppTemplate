@@ -5,8 +5,8 @@
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-import personSerializer
-import personQuery
+from . import personSerializer
+from . import personQuery
 
 # Class Dependencies
 

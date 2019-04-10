@@ -1,5 +1,5 @@
 create or replace function
-demo_get_data
+app_get_data
 	(
 	_table_type anyelement,
 	_criteria varchar(1024)
@@ -27,7 +27,7 @@ $$ language plpgsql;
 
 /*
 	select * from 
-		demo_get_data
+		app_get_data
 			(
 			null::public.project_lifecycle_city,
 			'country_id=10'
@@ -35,7 +35,7 @@ $$ language plpgsql;
 */
 
 create or replace function
-demo_get_data_json
+app_get_data_json
 	(
 	_table varchar(64),
 	_columns varchar(1024), /* Can be '*' for all columns */
@@ -58,7 +58,7 @@ A generic stored procedure to retrieve json data for specified columns from a si
 			select
                 '||_columns||'
 			from
-				demo_get_data
+				app_get_data
 					(
 					null::'||_table||',
 					'''||_criteria||'''
@@ -71,7 +71,7 @@ $$ language plpgsql;
 
 /*
 	select
-		demo_get_data_json
+		app_get_data_json
 			(
 			'public.project_lifecycle_city',
             'name_native,country_id',
@@ -80,7 +80,7 @@ $$ language plpgsql;
 */
 
 create or replace function
-demo_get_data_xml
+app_get_data_xml
 	(
 	_table varchar(64),
 	_columns varchar(1024), /* Can be '*' for all columns */
@@ -102,7 +102,7 @@ A generic stored procedure to retrieve json data for specified columns from a si
 				select
 					'||_columns||'
 				from
-					demo_get_data
+					app_get_data
 						(
 						null::'||_table||',
 						'''||_criteria||'''
@@ -115,7 +115,7 @@ $$ language plpgsql;
 
 /*
 	select
-		demo_get_data_xml
+		app_get_data_xml
 			(
 			'public.project_lifecycle_city',
             'name_native,country_id',

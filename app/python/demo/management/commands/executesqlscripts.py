@@ -1,7 +1,10 @@
+import os
+
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.conf import settings
-import os
+
+# python app\python\manage.py executesqlscripts
 
 class Command(BaseCommand):
     help = 'Drops all existing Postgres functions then executes all sql files in app/sql folder. The sql scripts need to be re-runable.'
@@ -13,6 +16,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
+            app = os.path.basename(os.path.normpath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
             sql_statement = \
                 """
                 do
@@ -24,11 +28,11 @@ class Command(BaseCommand):
                             ||
                             (
                                 select
-                                    '(' || replace(trim(coalesce(array_agg( parameter )::text,''),'{}'),'"','') || ')' as parameter_list
+                                    '(' || replace(trim(coalesce(array_agg( parameter )::text,''),'{{}}'),'"','') || ')' as parameter_list
                                 from
                                     (
                                     select
-                                        parameters.parameter_name || ' ' || replace(parameters.data_type,'ARRAY','plus_link_type[]') as parameter
+                                        parameters.parameter_name || ' ' || replace(parameters.data_type,'ARRAY','app_link_type[]') as parameter
                                     from
                                         information_schema.parameters
                                     where
@@ -40,7 +44,7 @@ class Command(BaseCommand):
                         from
                             information_schema.routines
                         where
-                            routines.specific_name like 'plus_%'
+                            routines.specific_name like '{0}_%'
                         order by
                             routines.routine_name;
                     function_definition_record record;
@@ -56,7 +60,7 @@ class Command(BaseCommand):
                         close function_definition_cursor; 
                     end
                     $do$
-                """
+                """.format(app)
             with connection.cursor() as c:
                 c.execute(sql_statement)
             sql_dir = os.path.join(os.path.abspath(os.path.join(settings.BASE_DIR, os.pardir)), 'sql')

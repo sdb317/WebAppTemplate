@@ -11,7 +11,7 @@
     <xsl:apply-templates select='column[./@column_name != concat($parent_table,"_id")]' mode='args'/>
     <xsl:text>            sqlStatement = u"select </xsl:text><xsl:value-of select='$app'/><xsl:text>_save_</xsl:text>
     <xsl:value-of select='$table'/>
-    <xsl:text>(%s, %d, </xsl:text>
+    <xsl:text>(%s, %s, </xsl:text>
     <xsl:choose>
       <xsl:when test='string-length($parent_table) > 0'>
         <xsl:text>%d, </xsl:text>
@@ -47,14 +47,14 @@
     <xsl:text>                )&#xa;&#xa;</xsl:text>
     <xsl:text>            sqlStatement = u"select </xsl:text><xsl:value-of select='$app'/><xsl:text>_remove_</xsl:text>
     <xsl:value-of select='$table'/>
-    <xsl:text>(%s, %d)"%(&#xa;</xsl:text>
+    <xsl:text>(%s, %s)"%(&#xa;</xsl:text>
     <xsl:text>                self.ParseValue(user),&#xa;</xsl:text>
     <xsl:text>                self.ParseValue(</xsl:text><xsl:value-of select='$table'/><xsl:text>_id),&#xa;</xsl:text>
     <xsl:text>                )&#xa;&#xa;</xsl:text>
   </xsl:template>
 
   <xsl:template match='column[@column_name!="id" and @column_name!="uuid" and @column_name!="saved_by" and @column_name!="saved_on"]' mode='args'>
-    <xsl:text>            sqlStatement += unicode(self.ParseValue(</xsl:text><xsl:value-of select='$table'/><xsl:text>[u'</xsl:text><xsl:value-of select='./@column_name'/><xsl:text>']))&#xa;</xsl:text>
+    <xsl:text>            sqlStatement += self.ParseValue(</xsl:text><xsl:value-of select='$table'/><xsl:text>[u'</xsl:text><xsl:value-of select='./@column_name'/><xsl:text>'])&#xa;</xsl:text>
     <xsl:choose>
       <xsl:when test='(following-sibling::*)'>
         <xsl:text>            sqlStatement += ", "&#xa;</xsl:text>

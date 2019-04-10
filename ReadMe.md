@@ -36,7 +36,7 @@ Test with `django-admin --version`.
 
 The project is included but can be created with `django-admin startproject _admin app/python`.
 
-The demo app is included but can be created with `django-admin startapp demo app/python/demo`.
+The demo app is included but can be created with `django-admin startapp demo app/python/demo`. To create other apps, first create the folder under `app/python` and then run the `startapp` command.
 
 ### Postgres
 
