@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <title>Test</title>
+    <meta charset='utf-8'>
+    <link rel="icon" type="image/png" href="/app/static/app/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/app/static/app/css/toolkit-inverse.css">
+    <!--<link rel="stylesheet" type="text/css" href="app/static/css/application.css">-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fredoka+One">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700">
+    <link href='https://code.jquery.com/qunit/qunit-2.2.1.css' rel='stylesheet' type='text/css' />
+    <script>
+
+    APP = {};
+    APP.staticFolder = '/app/static/app/';
+    console.log(APP.staticFolder);
+    APP.user = 'simon';
+    console.log(APP.user);
+    APP.emailIndividual = 'simon.bell@epfl.ch';
+    console.log(APP.emailIndividual);
+    APP.emailInstitution = APP.emailIndividual.match(/\@(.*)/i)[1];
+    console.log(APP.emailInstitution);
+    APP.name = 'BELL, Simon';
+    console.log(APP.name);
+
+    </script>
+</head>
+
+<body>
+    <div style='display: table;'>
+        <div style='display: table-row-group;'>
+            <div id='qunit-dashboard' style='display: table-row;'>
+                <div style='display: table-cell; width: 50%;'>
+                    <div id='qunit'></div>
+                    <div id='qunit-fixture'></div>
+                </div>
+            </div>
+            <div style='display: table-row;'>
+                <div style='display: table-cell; width: 50%;'>
+                    <div id='react'></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src='https://code.jquery.com/qunit/qunit-2.2.1.js'></script>
+    <script src='/app/js/tests.bundle.js'></script>
+</body>
+
+</html>

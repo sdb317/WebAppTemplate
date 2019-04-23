@@ -13,3 +13,10 @@ if __name__ == '__main__':
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+
+# python app\python\manage.py runserver --noreload localhost:8000 # runsslserver
+# python app\python\manage.py runserver --noreload 0.0.0.0:8000 # For access on local network
+
+# python app\python\manage.py shell
+# python app\python\manage.py shell_plus --notebook
+

@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.DEBUG)
 import re
 import json
 
-import definitions
+from . import definitions
 
 # Class Dependencies
 
@@ -51,12 +51,12 @@ class PersonQuery(optimisedModels.OptimisedModels):
             if 'first_name' in criteria['Criteria'] and criteria['Criteria']['first_name'] != None:
                 if len(sqlCriteria):
                     sqlCriteria += " and "
-                sqlCriteria += "(person.first_name=''%s'')"%(criteria['Criteria']['first_name'])
+                sqlCriteria += "(lower(person.first_name) like lower(''%%%s%%''))"%(criteria['Criteria']['first_name'])
                 detail = True
             if 'last_name' in criteria['Criteria'] and criteria['Criteria']['last_name'] != None:
                 if len(sqlCriteria):
                     sqlCriteria += " and "
-                sqlCriteria += "(person.last_name=''%s'')"%(criteria['Criteria']['last_name'])
+                sqlCriteria += "(lower(person.last_name) like lower(''%%%s%%''))"%(criteria['Criteria']['last_name'])
                 detail = True
             if 'email' in criteria['Criteria'] and criteria['Criteria']['email'] != None:
                 if len(sqlCriteria):
@@ -87,17 +87,19 @@ class PersonQuery(optimisedModels.OptimisedModels):
         try:
             person = instance
             person_id = person['id']
-            links = ','.join(['row(%d,%d,%d)'%(person['id'],i['value'],i['type'],) for i in person['links']])
+            links = ''
+            if 'links' in person:
+                links = ','.join(['row(%d,%d,%d)'%(person['id'],i['value'],i['type'],) for i in person['links']])
             links = 'array[%s]::app_link_type[]'%links
             sqlStatement = ""
-            sqlStatement += self.ParseValue(person[u'email'])
+            sqlStatement += self.ParseValue(person['email'])
             sqlStatement += ", "
-            sqlStatement += self.ParseValue(person[u'first_name'])
+            sqlStatement += self.ParseValue(person['first_name'])
             sqlStatement += ", "
-            sqlStatement += self.ParseValue(person[u'last_name'])
+            sqlStatement += self.ParseValue(person['last_name'])
             sqlStatement += ", "
-            sqlStatement += self.ParseValue(person[u'type'])
-            sqlStatement = u"select demo_save_person(%s, %s, %s, %s)"%(
+            sqlStatement += self.ParseValue(person['type'])
+            sqlStatement = "select demo_save_person(%s, %s, %s, %s)"%(
                 self.ParseValue(user),
                 self.ParseValue(person_id),
                 links,
@@ -115,7 +117,7 @@ class PersonQuery(optimisedModels.OptimisedModels):
         try:
             person = instance
             person_id = person['id']
-            sqlStatement = u"select demo_remove_person(%s, %s)"%(
+            sqlStatement = "select demo_remove_person(%s, %s)"%(
                 self.ParseValue(user),
                 self.ParseValue(person_id),
                 )

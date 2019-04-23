@@ -11,22 +11,22 @@ begin
         insert into /* Audit current item */
             public.demo_person_audit
                 (
-                uuid,
                 saved_on,
                 saved_by,
                 person_id,
                 email,
                 first_name,
-                last_name
+                last_name,
+                type
                 )
             select
-                uuid,
                 saved_on,
                 saved_by,
                 id,
                 email,
                 first_name,
-                last_name
+                last_name,
+                type
             from
                 public.demo_person
             where
@@ -34,22 +34,22 @@ begin
         insert into /* Audit deletion */
             public.demo_person_audit
                 (
-                uuid,
                 saved_on,
                 saved_by,
                 person_id,
                 email,
                 first_name,
-                last_name
+                last_name,
+                type
                 )
             select
-                uuid,
                 now(),
                 _saved_by,
                 id,
                 email,
                 first_name,
-                last_name
+                last_name,
+                type
             from
                 public.demo_person
             where

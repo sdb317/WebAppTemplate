@@ -33,7 +33,7 @@ class PersonViewSet(viewSet.ViewSet):
 
     @property
     def query(self):
-        return personQuery.PersonQuery(u'person')
+        return personQuery.PersonQuery('person')
 
     def retrieve(self,request,pk=None):
         logging.info('PersonViewSet.retrieve')

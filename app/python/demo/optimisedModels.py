@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.DEBUG)
 import re
 import json
 
-import definitions
+from . import definitions
 
 from . import managedConnection
 
@@ -60,18 +60,18 @@ class OptimisedModels(models.PermissionModel):
     def get(self,criteria):
         sqlCriteria = ''
         detail = False
-        if u'detail' in criteria[u'Criteria'] and criteria[u'Criteria'][u'detail'] == 'true':
+        if 'detail' in criteria['Criteria'] and criteria['Criteria']['detail'] == 'true':
             detail = True
         audit = False
-        if u'audit' in criteria[u'Criteria'] and criteria[u'Criteria'][u'audit'] == 'true':
+        if 'audit' in criteria['Criteria'] and criteria['Criteria']['audit'] == 'true':
             audit = True
-        if u'id' in criteria[u'Criteria'] and criteria[u'Criteria'][u'id'] != None:
-            sqlCriteria += "(%s.id=%s)"%(self.table, criteria[u'Criteria'][u'id']) # An integer
+        if 'id' in criteria['Criteria'] and criteria['Criteria']['id'] != None:
+            sqlCriteria += "(%s.id=%s)"%(self.table, criteria['Criteria']['id']) # An integer
             detail = True
-        if u'saved_by' in criteria[u'Criteria'] and criteria[u'Criteria'][u'saved_by'] != None and len(criteria[u'Criteria'][u'saved_by']) > 0: # This is a list of words to search for in publication name field
+        if 'saved_by' in criteria['Criteria'] and criteria['Criteria']['saved_by'] != None and len(criteria['Criteria']['saved_by']) > 0: # This is a list of words to search for in publication name field
             if len(sqlCriteria):
                 sqlCriteria += " and "
-            sqlCriteria += "(%s.saved_by=''%s'' or %s_audit.saved_by=''%s'')"%(self.table, criteria[u'Criteria'][u'saved_by'], self.table, criteria[u'Criteria'][u'saved_by'])
+            sqlCriteria += "(%s.saved_by=''%s'' or %s_audit.saved_by=''%s'')"%(self.table, criteria['Criteria']['saved_by'], self.table, criteria['Criteria']['saved_by'])
         return (sqlCriteria,detail,audit)
 
     def GetTypeForHBPID(self,id):

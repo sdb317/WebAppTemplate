@@ -11,7 +11,7 @@ declare SQL text;
 declare table_list text; 
 declare column_list text; 
 begin
-	 /*  */
+	 /* (select  from public. where id=link.link_id) */
 	if _detail then
 	    table_list:=
 		    '
@@ -33,14 +33,14 @@ begin
 				(
 				select
                     case
-                        when link.link_type=(select numeric from public.plus__definition where category=''EntityType'' and label=''<OtherEntity>'')
-                            then (select abbreviation from public.project_lifecycle_consortium where id=link.link_id)
+                        when link.link_type=(select numeric from public.demo__definition where category=''EntityType'' and label=''<OtherEntity>'')
+                            then ''''
                         else ''''
                     end as name,
                     link.link_id as value,
                     link.link_type as type
 				from
-					public.plus__link link
+					public.demo__link link
 				where
 					link.entity_id=person.id
                     and
@@ -51,8 +51,8 @@ begin
 	else
 	    table_list:=
 		    '
-            public.plus_person person
-            left outer join public.plus_person_audit person_audit
+            public.demo_person person
+            left outer join public.demo_person_audit person_audit
                 on person_audit.person_id=person.id
 		    ';
 	    column_list:=
@@ -93,7 +93,7 @@ begin
 	SQL:=
 		'
 		select 
-			array_to_json(array_agg(person.* order by person.person_date desc))
+			array_to_json(array_agg(person.* order by person.last_name,person.first_name desc))
 		from
 			(
 			select 

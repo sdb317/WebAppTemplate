@@ -31,7 +31,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.contrib.auth.decorators import user_passes_test, login_required
 
-import definitions
+from . import definitions
 
 def conditionally(decorator, condition):
     def decorated_result(f):
@@ -84,11 +84,14 @@ def home(request, *args, **kwargs):
     """
     logging.info('views.home')
     try:
-        user = request.user.username
+        #user = request.user.username
+        user = 'simon'
         logging.info('  user: %s'%user)
-        email = request.user.email
+        #email = request.user.email
+        email = 'simon.bell@epfl.ch'
         logging.info('  email: %s'%email)
-        name = request.user.name
+        #name = request.user.name
+        name = 'Simon BELL'
         logging.info('  name: %s'%name)
         return render_to_response('index.html', {'user': user, 'email': email, 'name': name}) # 'institution': institution, 
     except Exception as e:
@@ -117,7 +120,7 @@ def get_data_json(cursor, table, columns, criteria, path):
     """
     logging.info('views.get_data_json')
     try:
-        sqlStatement = u"select app_get_data_json('%s', '%s', '%s')"%(table, columns, criteria.replace("'","''''"))
+        sqlStatement = "select app_get_data_json('%s', '%s', '%s')"%(table, columns, criteria.replace("'","''''"))
         logging.info(sqlStatement)
         cursor.execute(sqlStatement)
         jsonList = cursor.fetchone()[0] # ...as a list of dicts
@@ -127,26 +130,26 @@ def get_data_json(cursor, table, columns, criteria, path):
         return (True, jsonString,)
     except Exception as e:
         logging.error('Exception: %s'%str(e))
-        return (False, u'{"Error": "%s"}'%str(e),)
+        return (False, '{"Error": "%s"}'%str(e),)
 
 @WithCursor
 def get_options_json(cursor, category, item):
     logging.info('views.get_options_json')
     try:
-        sqlStatement = u"select demo_get_options('%s','%s')"%(category, item) # Get Postgres to serve up JSON objects...
+        sqlStatement = "select demo_get_options('%s','%s')"%(category, item) # Get Postgres to serve up JSON objects...
         logging.info(sqlStatement)
         cursor.execute(sqlStatement)
         jsonList = cursor.fetchone()[0] # ...as a list of dicts
         if jsonList == None:
-            jsonString = u'[]'
+            jsonString = '[]'
         else:
-            jsonFilteredList = [u'{%s}'%u','.join([u'"label": "%s"'%v[u'label'], u'"numeric": %s'%str(v[u'numeric']), u'"alphanumeric": "%s"'%v[u'alphanumeric']]) for i,v in enumerate(jsonList)] # List comprehension
-            jsonFilteredList = u','.join(jsonFilteredList) # Convert to a string
-            jsonString = u'[%s]'%convert_results(jsonFilteredList) # Wrap in an array
+            jsonFilteredList = ['{%s}'%','.join(['"label": "%s"'%v['label'], '"numeric": %s'%str(v['numeric']), '"alphanumeric": "%s"'%v['alphanumeric']]) for i,v in enumerate(jsonList)] # List comprehension
+            jsonFilteredList = ','.join(jsonFilteredList) # Convert to a string
+            jsonString = '[%s]'%convert_results(jsonFilteredList) # Wrap in an array
         return (True, jsonString,)
     except Exception as e:
         logging.error('Exception: %s'%str(e))
-        return (False, u'{"Error": "%s"}'%str(e),)
+        return (False, '{"Error": "%s"}'%str(e),)
 
 from django.utils.decorators import method_decorator
 

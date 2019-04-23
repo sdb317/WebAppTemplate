@@ -3,10 +3,11 @@ demo_save_person
     (
     _saved_by varchar(256),
     _id int,
-    _links demo_link_type[],
+    _links app_link_type[][],
     _email varchar(256),
     _first_name varchar(256),
-    _last_name varchar(256)
+    _last_name varchar(256),
+    _type int
     )
 returns int as
 $$
@@ -15,21 +16,21 @@ begin
         insert into
             public.demo_person
                 (
-                uuid,
                 saved_on,
                 saved_by,
                 email,
                 first_name,
-                last_name
+                last_name,
+                type
                 )
             values
                 (
-                (select md5(random()::text || clock_timestamp()::text)::uuid),
                 now(),
                 _saved_by,
                 _email,
                 _first_name,
-                _last_name
+                _last_name,
+                _type
                 );
         _id=currval(pg_get_serial_sequence('demo_person','id')); /* Get the new identity value */
         insert into /* Add new links */
@@ -51,22 +52,22 @@ begin
         insert into
             public.demo_person_audit
                 (
-                uuid,
                 saved_on,
                 saved_by,
                 person_id,
                 email,
                 first_name,
-                last_name
+                last_name,
+                type
                 )
             select
-                uuid,
                 saved_on,
                 saved_by,
                 id,
                 email,
                 first_name,
-                last_name
+                last_name,
+                type
             from
                 public.demo_person
             where
@@ -78,7 +79,8 @@ begin
                     saved_by=_saved_by,
                     email=_email,
                     first_name=_first_name,
-                    last_name=_last_name
+                    last_name=_last_name,
+                    type=_type
                 where
                     id=_id;
         insert into /* Add new links */
@@ -142,10 +144,11 @@ select
         (
         '', -- _saved_by varchar(256),
         0, -- _id int,
-        array[row(0,0,0),]::demo_link_type[], -- _links demo_link_type[],
+        array[row(0,0,0),]::app_link_type[][], -- _links app_link_type[][],
         '', -- _email varchar(256),
         '', -- _first_name varchar(256),
-        '' -- _last_name varchar(256)
+        '', -- _last_name varchar(256),
+        0 -- _type int
         )
 */
 

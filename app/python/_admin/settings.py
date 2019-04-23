@@ -21,12 +21,15 @@ import dj_database_url
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 logging.info('BASE_DIR: %s'%BASE_DIR)
 
+APP = os.environ['APP']
+logging.info('APP: %s'%APP)
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1$6vig-^1ytye$9svhy**p=x^v$(7=!+fm749q0fy$rw#v7!0z' # Change this for your project!!!
+SECRET_KEY = os.environ['SECRET_KEY']
 
 ALLOWED_HOSTS = []
 
@@ -55,7 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'demo', # Add your app(s) here!
+    APP,
 ]
 
 MIDDLEWARE = [
@@ -68,7 +71,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = APP + '.urls'
 
 TEMPLATES = [
     {
@@ -155,5 +158,5 @@ STATIC_URL = '/static/'
 logging.info('STATIC_URL: %s'%str(STATIC_URL))
 
 #TEST_RUNNER = 'django.test.runner.DiscoverRunner'
-TEST_RUNNER = 'demo.tests.DiscoverRunnerForPLUS' # This allows us to run tests in development without creating some hair-brained test db!
+TEST_RUNNER = APP + '.tests.DiscoverRunnerForApp' # This allows us to run tests in development without creating some hair-brained test db!
 

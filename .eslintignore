@@ -1,0 +1,9 @@
+node_modules
+env
+scripts
+webpack.config.*
+definitions.js
+*.test.js
+*.test.jsx
+tests.bundle.js
+jsonpath.js

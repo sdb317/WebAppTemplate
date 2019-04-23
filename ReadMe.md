@@ -1,3 +1,10 @@
+## Contents
+
+- Introduction
+- Models
+- Standards for REST api's
+- UI
+
 ## Introduction
 
 The aim of this project is to create a web application that leverages Postgres, Django, React and Heroku in order to minimise time-to-market. Repetitive, error-prone manual task are eliminated, where possible, by adopting a model-centric code-generation approach.
@@ -48,7 +55,7 @@ The DATABASE_URL environment variable needs to be set. See `env.bat`.
 
 Test the database setup with `python app\python\manage.py dbshell`.
 
-## Create Models
+## Models
 
 The `models.py` file is quite different to what you would normally see in a Django project. There is no logic in it as the model 'heavy lifting' is always done in Postgres functions for optimal performance.
 
@@ -92,19 +99,19 @@ The above assumes msxsl.exe is installed.
 Once the Postgres functions have been created, they can be loaded into the database wit `python app\python\manage.py executesqlscripts`.
 
 
-## Project Standards for RESTapi's
+## Standards for REST api's
 
-This document describes the standards to be applied for **all** RESTapi development. It aims to provide a consistent and intuitive interface between client & server applications.
+This describes the standards to be applied for **all** RESTapi development. It aims to provide a consistent and intuitive interface between client & server applications.
 
 For Django applications the Django REST Framework package is used to provide a base-level of functionality. Custom classes are then added to override this for specific features e.g to call Postgres user-defined functions instead of Django models.
 
 ### API Versioning
 
-The URL should start with a version number e.g. ```/1/persons/```, so that 'breaking changes' can be released while still supporting older clients.
+The URL should start with a label and version number e.g. ```/api/1/person/```, so that 'breaking changes' can be released while still supporting older clients.
 
 ### URL Naming
 
-The URL should only contain resources (nouns), not actions or verbs e.g. ```/persons/``` not ```/addNewPperson/```
+The URL should only contain resources (nouns), not actions or verbs e.g. ```/person/``` not ```/addNewPerson/```
 
 The resource should always be plural in the API endpoint and if we want to access one instance of the resource, we can always pass the id in the URL
 
@@ -114,11 +121,11 @@ All URL's shound end in a forward-slash. ```/```
 
 The verbs should be represented by the 4 different HTTP methods: GET, POST, DELETE, PUT
 
-* method ```GET``` path ```/persons/``` should get the list of all persons, or a filtered list if query parameters are supplied
-* method ```GET``` path ```/persons/34/``` should get the details of person 34
-* method ```DELETE``` path ```/persons/34/``` should delete person 34
-* method ```POST``` path ```/persons/``` should create a new person, using the payload supplied, and return a unique identifier for the created record
-* method ```POST or PUT``` path ```/persons/34/``` should update the existing person 34, using the payload supplied
+* method ```GET``` path ```/person/``` should get the list of all persons, or a filtered list if query parameters are supplied
+* method ```GET``` path ```/person/34/``` should get the details of person 34
+* method ```DELETE``` path ```/person/34/``` should delete person 34
+* method ```POST``` path ```/person/``` should create a new person, using the payload supplied, and return a unique identifier for the created record
+* method ```POST or PUT``` path ```/person/34/``` should update the existing person 34, using the payload supplied
 
 ### HTTP response status codes
 
@@ -151,5 +158,20 @@ These can be appended to the URL using the standard ```?name=value&...``` syntax
 The payload will typically be either HTML, text, well-formed JSON or XML
 
 The HTTP ```content-type``` header will always be set appropriately
+
+
+## UI
+
+The UI is built using ES6, React & Mobx. It also uses the QuickFire form library from the Human Brain Project.
+
+Webpack is used to build the Javascript bundle that is then served by a Django template, `layout.html`.
+
+The parent React component is `App.jsx`, which uses ReactRouter to provide navigation to all other functional components. Typically each component consists of a visual module in the `Components` folder and associated Mobx observables in a store module in the `Stores` folder. Each module will also have a corresponding unit test module.
+
+### Developing/Testing Strategy
+
+Components can be tested visually and functionally using QUnit and `tests.js`. This approach fast-tracks the development cycle by allowing rendering, styling and functionality to be developed and tested in isolation but all providing unit test assets to be used during subsequent CI/CD.
+
+
 
 

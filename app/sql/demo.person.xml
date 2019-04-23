@@ -3,4 +3,5 @@
 	<column column_name="email" data_type="character varying" character_maximum_length="256"/>
 	<column column_name="first_name" data_type="character varying" character_maximum_length="256"/>
 	<column column_name="last_name" data_type="character varying" character_maximum_length="256"/>
+	<column column_name="type" data_type="integer"/>
 </column_list>

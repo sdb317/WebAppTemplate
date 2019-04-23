@@ -99,7 +99,7 @@ class MyTestCases(TestCase):
         try:
             from .personQuery import PersonQuery
             test = PersonQuery('person')
-            results = test.get(json.loads('{"Criteria": {"first_name": null, "last_name": null, "email": null, "type": null}}'))
+            results = test.get(json.loads('{"Criteria": {"first_name": null, "last_name": null, "email": null, "type": null, "detail": "true", "audit": "true"}}'))
             self.assertTrue((re.search(r'Persons', str(results)) != None), r'Unexpected contents')
         except Exception as e:
             assert False,'Exception: %s'%str(e)
@@ -112,10 +112,10 @@ class MyTestCases(TestCase):
             payload = \
                 """
                 {
-                    "id":2,
+                    "id":1,
                     "first_name": "Simon",
                     "last_name": "BELL",
-                    "email": "simon.bell@epfl.ch",
+                    "email": "simon-bell@xl-direct.com",
                     "type": 0,
                     "links":[
                     ]

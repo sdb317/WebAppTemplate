@@ -46,7 +46,7 @@ class ViewSet(rest_framework.viewsets.ViewSet):
     def get_data(self,criteria):
         results = self.query.get(criteria)
         if not results[0]:
-            raise Exception('Error: ViewSet.get')
+            raise Exception('Error: ViewSet.get - ' + results[1])
         return json.loads(results[1])
 
     def retrieve(self,request,pk=None):
@@ -58,7 +58,7 @@ class ViewSet(rest_framework.viewsets.ViewSet):
             serializer = self.serializer_class(data=self.get_data(criteria))
             return rest_framework.response.Response(serializer.initial_data)
         except Exception as e:
-            return JsonResponse(data={'message': 'Error: ViewSet.retrieve - '%e.message}, status=500)
+            return JsonResponse(data={'message': 'Error: ViewSet.retrieve - %s'%str(e)}, status=500)
         return
 
     def list(self,request):
@@ -67,13 +67,13 @@ class ViewSet(rest_framework.viewsets.ViewSet):
             serializer = self.serializer_class(data=self.get_data(criteria))
             return rest_framework.response.Response(serializer.initial_data)
         except Exception as e:
-            return JsonResponse(data={'message': 'Error: ViewSet.list - '%e.message}, status=500)
+            return JsonResponse(data={'message': 'Error: ViewSet.list - %s'%str(e)}, status=500)
         return
 
     def set_data(self,data,user):
         results = self.query.set(data, user)
         if not results[0]:
-            raise Exception('Error: ViewSet.set')
+            raise Exception('Error: ViewSet.set - ' + results[1])
         return json.loads(results[1])
 
     def create(self,request):
@@ -82,17 +82,17 @@ class ViewSet(rest_framework.viewsets.ViewSet):
             result = self.set_data(data, request.user.username)
             return rest_framework.response.Response(result)
         except Exception as e:
-            return JsonResponse(data={'message': 'Error: ViewSet.create - '%e.message}, status=500)
+            return JsonResponse(data={'message': 'Error: ViewSet.create - %s'%str(e)}, status=500)
         return
 
     def update(self,request,pk=None):
         try:
             data = request.data
-            data[u'id'] = int(pk)
+            data['id'] = int(pk)
             result = self.set_data(data, request.user.username)
             return rest_framework.response.Response(result)
         except Exception as e:
-            return JsonResponse(data={'message': 'Error: ViewSet.update - '%e.message}, status=500)
+            return JsonResponse(data={'message': 'Error: ViewSet.update - %s'%str(e)}, status=500)
         return
 
     def remove_data(self,data,user):
@@ -104,12 +104,12 @@ class ViewSet(rest_framework.viewsets.ViewSet):
     def destroy(self,request,pk=None):
         try:
             data = {}
-            data[u'id'] = int(pk)
+            data['id'] = int(pk)
             serializer = self.serializer_class(data=data)
             result = self.remove_data(serializer.initial_data, request.user.username)
             return rest_framework.response.Response(result)
         except Exception as e:
-            return JsonResponse(data={'message': 'Error: ViewSet.destroy - '%e.message}, status=500)
+            return JsonResponse(data={'message': 'Error: ViewSet.destroy - %s'%str(e)}, status=500)
         return
 
     def partial_update(self,request,pk=None):
