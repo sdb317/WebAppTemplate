@@ -172,6 +172,8 @@ The parent React component is `App.jsx`, which uses ReactRouter to provide navig
 
 Components can be tested visually and functionally using QUnit and `tests.js`. This approach fast-tracks the development cycle by allowing rendering, styling and functionality to be developed and tested in isolation but all providing unit test assets to be used during subsequent CI/CD.
 
+### Demo Application
 
+![Demo](https://github.com/sdb317/WebAppTemplate/raw/master/app/static/app/img/Demo.png)
 
 
